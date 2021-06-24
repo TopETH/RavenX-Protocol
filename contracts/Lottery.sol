@@ -40,7 +40,6 @@ contract Lottery is Ownable {
     uint256 public endingTimeStamp;
     uint256 public balanceOfPrizePool;
     uint256 public balanceOfNextPool;
-    // uint256 public balanceOfMarketing;
     STATE public currentState;
     
     event NewEntry(uint256 endingTimeStamp);
@@ -92,20 +91,16 @@ contract Lottery is Ownable {
 
     function getLotteryStatus() external view returns(
         uint256 _lotteryId,
-        uint256 _leftTimestamp, 
+        uint256 _endingTimestamp, 
         STATE _currentState, 
         address[] memory _candsOfWin, 
         uint256[] memory _putIns, 
         uint256[] memory _timestamps,
-        uint256[] memory _willWins) {
+        uint256[] memory _willWins,
+        uint256 _balanceOfPrizePool) {
         _lotteryId = lotteryId;
-        if(endingTimeStamp > block.timestamp){
-            _leftTimestamp =  endingTimeStamp - block.timestamp;
-        }
-        else{
-            _leftTimestamp = 0;
-        }
-        
+        _endingTimestamp = endingTimeStamp;
+        _balanceOfPrizePool = balanceOfPrizePool;
         _currentState = currentState;
         (_candsOfWin, _putIns, _timestamps, _willWins) = _calcCandsOfWin();
     }

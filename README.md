@@ -1,1 +1,3 @@
-Lottery Smart Contract: [0x06613615d500EAA5083da1eF6070658b595982d5](#https://bscscan.com/address/0x27ad6490372232f2d9ab0dbeb326431bebff3c3a)
+BSC Mainnet: [0xa08324d00e08548d5551c4c7dfdd0a93d9f374d4](https://bscscan.com/address/0xa08324d00e08548d5551c4c7dfdd0a93d9f374d4)
+
+Ropsten: [0x250ECAfFEFfe8421C7f41480B8AD291116DBD8BF](https://ropsten.etherscan.io/address/0x250ECAfFEFfe8421C7f41480B8AD291116DBD8BF)
