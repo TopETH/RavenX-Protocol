@@ -11,16 +11,10 @@ contract Lottery is Ownable {
 
     enum STATE { IDLE, OPEN }
 
-    struct LotteryInfo {
-        uint256 lotteryID;          // ID for lotto
-        address[] winners;
-        uint256[] putIns; 
-        uint256[] timestamps;
-        uint256[] winsAmounts;
-        uint256 endTimestamp; 
-    }
-
-    mapping(uint256=>LotteryInfo) historyOfLotteries;
+    address[] lastWinners;
+    uint256[] lastPutIns;
+    uint256[] lastTimestamps;
+    uint256[] lastWinsAmounts;
 
     //factors to initialize
     uint256 public hardCapOfNextPool;
@@ -75,16 +69,6 @@ contract Lottery is Ownable {
         currentState = STATE.OPEN;
 
         endingTimeStamp = (block.timestamp).add(18000);
-
-        delete chasers;
-        delete putIns;
-        delete timestamps;
-
-        chasers = new address[](0);
-        putIns = new uint256[](0);
-        timestamps = new uint256[](0);
-
-        lenChasers = 0;
 
         emit NewEntry(endingTimeStamp);
     }
@@ -169,29 +153,28 @@ contract Lottery is Ownable {
         currentState = STATE.IDLE;
 
         //save lottery info
-        LotteryInfo memory newLottery = LotteryInfo(
-            lotteryId,
-            _candsOfWin,
-            _putIns,
-            _timestamps,
-            _willWins,
-            block.timestamp
-        );
-        historyOfLotteries[lotteryId] = newLottery;
+        lastWinners = _candsOfWin;
+        lastPutIns = _putIns;
+        lastTimestamps = _timestamps;
+        lastWinsAmounts = _willWins;
+
+        chasers = new address[](0);
+        putIns = new uint256[](0);
+        timestamps = new uint256[](0);
+
+        lenChasers = 0;
     }
 
-    function getLastLotteryInfo(uint256 id) external view returns( 
+    function getLastLotteryInfo() external view returns( 
         address[] memory _winners, 
         uint256[] memory _putIns, 
         uint256[] memory _timestamps, 
-        uint256[] memory _winsAmounts, 
-        uint256 _endTimestamp)
+        uint256[] memory _winsAmounts)
     {
-        _winners = historyOfLotteries[id].winners;
-        _putIns = historyOfLotteries[id].putIns; 
-        _timestamps =  historyOfLotteries[id].timestamps;
-        _winsAmounts = historyOfLotteries[id].winsAmounts;
-        _endTimestamp = historyOfLotteries[id].endTimestamp;
+        _winners = lastWinners;
+        _putIns = lastPutIns; 
+        _timestamps =  lastTimestamps;
+        _winsAmounts = lastWinsAmounts;
     }
 
     function _calcCandsOfWin() internal view returns(
@@ -262,11 +245,11 @@ contract Lottery is Ownable {
         (payable(msg.sender)).transfer(amount);
     }
 
-    function getMarketingBalance() external view onlyOwner() returns(uint256 _balance){
+    function getMarketingBalance() external view returns(uint256 _balance){
         _balance =  (address(this).balance).sub(balanceOfPrizePool).sub(balanceOfNextPool);
     }
 
-    function sendThisMarketing(address marketingAddress) external onlyOwner(){
+    function sendToThisMarketing(address marketingAddress) external onlyOwner(){
         payable(marketingAddress).transfer((address(this).balance).sub(balanceOfPrizePool).sub(balanceOfNextPool));
     }
 
