@@ -68,7 +68,7 @@ contract Lottery is Ownable {
 
         currentState = STATE.OPEN;
 
-        endingTimeStamp = (block.timestamp).add(18000);
+        endingTimeStamp = (block.timestamp).add(10800);
 
         emit NewEntry(endingTimeStamp);
     }
@@ -163,6 +163,7 @@ contract Lottery is Ownable {
         timestamps = new uint256[](0);
 
         lenChasers = 0;
+        emit NewEntry(endingTimeStamp);
     }
 
     function getLastLotteryInfo() external view returns( 
