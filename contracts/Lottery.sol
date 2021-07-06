@@ -147,7 +147,9 @@ contract Lottery is Ownable {
         uint256[] memory _willWins;
         (_candsOfWin, _putIns, _timestamps, _willWins) = _calcCandsOfWin();
         for(uint i = 0; i < _candsOfWin.length; i++){
-            (payable(_candsOfWin[i])).transfer(_willWins[i]);
+            if(_candsOfWin[i] != address(0)){
+                (payable(_candsOfWin[i])).transfer(_willWins[i]);
+            }     
         }
         balanceOfPrizePool = 0;
         currentState = STATE.IDLE;
@@ -221,17 +223,15 @@ contract Lottery is Ownable {
         hardCapOfNextPool = _hardCap;
     }
 
-    function setFeePrizePool1(uint256 _fee) external inState(STATE.IDLE) onlyOwner(){
-        require(_fee > 1 && _fee < 99, 'fee should be between 1 and 99');
-        feePrizePool1 = _fee;
+    function setFeePrizeAndNextPool1(uint256 _feePrizePool1, uint256 _feeNextPool1) external onlyOwner(){
+        require(_feePrizePool1 > 1 && _feePrizePool1 < 99, 'fee should be between 1 and 99');
+        require(_feeNextPool1 > 1 && _feeNextPool1 < 99, 'fee should be between 1 and 99');
+        require(_feePrizePool1 + _feeNextPool1 < 100, 'invalid marketing fee');
+        feePrizePool1 = _feePrizePool1;
+        feeNextPool1 = _feeNextPool1;
     }
 
-    function setFeeNextPool1(uint256 _fee) external inState(STATE.IDLE) onlyOwner(){
-        require(_fee > 1 && _fee < 99, 'fee should be between 1 and 99');
-        feeNextPool1 = _fee;
-    }
-
-    function setFeePrizePool2(uint256 _fee) external inState(STATE.IDLE) onlyOwner(){
+    function setFeePrizePool2(uint256 _fee) external onlyOwner(){
         require(_fee > 1 && _fee < 99, 'fee should be between 1 and 99');
         feePrizePool2 = _fee;
     }
